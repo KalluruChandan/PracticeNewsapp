@@ -1,0 +1,11 @@
+#spring config
+spring:
+  application:
+    name: auth
+  config:
+    import: configserver:http://localhost:8888
+
+logging:
+  level:
+    web: DEBUG
+

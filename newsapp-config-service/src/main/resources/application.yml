@@ -1,0 +1,30 @@
+#port config
+server:
+  port: 8888
+
+#Spring App Config
+spring:
+  application:
+    name: ConfigServer
+
+  #config server configuration
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/KalluruChandan/Newsapp-Config-Repo
+          search-paths:
+            - '*service'
+          clone-on-start: true
+
+#By default, all web endpoints are available beneath the path
+#/actuator with URLs of the form /actuator/{id}.
+#The /actuator base path can be configured by using the
+#management.endpoints.web.base-path property,
+#as shown in the following example:
+management:
+  endpoints:
+    web:
+      base-path: /manage
+      exposure:
+        include: '*'

@@ -1,0 +1,10 @@
+#spring config
+spring:
+  application:
+    name: wishlist
+  config:
+    import: configserver:http://localhost:8888
+
+logging:
+  level:
+    web: DEBUG
