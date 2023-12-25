@@ -28,3 +28,8 @@ management:
       base-path: /manage
       exposure:
         include: '*'
+
+#config app properties
+config:
+  welcome:
+    message: Hello, This is Configuration Server
