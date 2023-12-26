@@ -33,3 +33,18 @@ management:
 config:
   welcome:
     message: Hello, This is Configuration Server
+
+## swagger-ui custom path
+#springdoc:
+#  swagger-ui:
+#    path: /swagger
+#  # /api-docs endpoint custom path
+#  api-docs:
+#    path: /docs
+#
+#  show-actuator: true
+
+#logging
+logging:
+  level:
+    web: DEBUG
