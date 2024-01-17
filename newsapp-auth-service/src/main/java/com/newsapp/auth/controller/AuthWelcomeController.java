@@ -17,7 +17,7 @@ public class AuthWelcomeController {
     private String message;
 
     @GetMapping(
-            path = "/welcome"
+            path = "${auth.endpoint.welcome}"
     )
     @Operation(
             summary = "Get welcome message",

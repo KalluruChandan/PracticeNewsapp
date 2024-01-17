@@ -1,4 +1,4 @@
-package com.newsapp.wishlist.model;
+package com.newsapp.userprofile.model;
 
 public enum Result {
     SUCCESS,
