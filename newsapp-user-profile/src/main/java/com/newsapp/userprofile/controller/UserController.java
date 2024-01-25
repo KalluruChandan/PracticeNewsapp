@@ -23,7 +23,7 @@ import java.util.Locale;
 
 @RestController
 @RequestMapping(
-        path = "/newsapp/v1/user-profile"
+        path = "${user-profile.endpoint.common}"
 )
 @Slf4j
 public class UserController {
@@ -32,7 +32,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(
-            path = "/register"
+            path = "${user-profile.endpoint.register}"
     ) //    localhost:8102/newsapp/v1/user-profile/register
     @Operation(
             summary = "register a user",

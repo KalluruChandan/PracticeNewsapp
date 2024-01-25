@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,6 +29,8 @@ public class UserService {
     @Autowired
     private NewTopic topic;
 
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public AppResponse register(User user) throws UsernameTakenException {
         Optional<User> userFound = userRepository.findById(user.getUsername());
         if(userFound.isPresent()){
@@ -34,6 +38,7 @@ public class UserService {
             throw new UsernameTakenException("Username provided is already registered. Try new Username......:)");
         }
         else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             User userCreated = userRepository.save(user);
             kafkaTemplate.send("user-registration-topic",userCreated);
 

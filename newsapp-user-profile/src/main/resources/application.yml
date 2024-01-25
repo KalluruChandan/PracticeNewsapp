@@ -2,7 +2,10 @@
 #spring config
 spring:
   application:
-    name: user-profile
+    name: NEWSAPP-USER-PROFILE
   config:
     import: configserver:http://localhost:8888
+
+
+
 

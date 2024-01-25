@@ -1,7 +1,7 @@
 #spring config
 spring:
   application:
-    name: auth
+    name: NEWSAPP-AUTH-SERVICE
   config:
     import: configserver:http://localhost:8888
 
