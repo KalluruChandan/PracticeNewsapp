@@ -1,16 +1,24 @@
 package com.newsapp.auth.controller;
 
+import com.newsapp.auth.jwtUtil.JwtHelper;
+import com.newsapp.auth.model.LoginRequest;
+import com.newsapp.auth.model.LoginResponse;
 import com.newsapp.auth.model.User;
+import com.newsapp.auth.model.UserDetailsImpl;
 import com.newsapp.auth.repository.AuthRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,7 +32,14 @@ public class AuthController {
     @Autowired
     private AuthRepository authRepository;
 
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private AuthenticationManager manager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtHelper jwtHelper;
 
     @PostMapping(
             path = "${auth.endpoint.login}"
@@ -33,10 +48,51 @@ public class AuthController {
             summary = "Login here",
             description = "This endpoint will enable a registered user to login."
     )
-    public List<User> login(){
-        List<User> allUsers = authRepository.findAll();
-        log.info("----------"+passwordEncoder.matches("chan123",allUsers.get(0).getPassword()));
-        return allUsers;
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest){
+
+        log.debug("entered login()");
+
+//        this.doAuthenticate(loginRequest.getUsername(), loginRequest.getPassword());
+
+        UserDetails userDetails = userDetailsBuilder(loginRequest);
+        String token = jwtHelper.generateToken(userDetails);
+
+        LoginResponse response = LoginResponse.builder()
+                .username(loginRequest.getUsername())
+                .token(token)
+                .build();
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.OK
+        );
     }
-//    public void login(){}
+
+
+    private void doAuthenticate(String email, String password) {
+
+        log.debug("Entered doAuthenticate()");
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
+        try {
+            manager.authenticate(authentication);
+        }
+        catch (BadCredentialsException e) {
+            log.debug("BadCredentialsException "+e.toString());
+            throw new BadCredentialsException(" Invalid Username or Password  !!");
+        }
+        log.debug("left doAuthenticate()");
+    }
+
+    private UserDetails userDetailsBuilder(LoginRequest request){
+        return UserDetailsImpl.builder()
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .build();
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public String exceptionHandler() {
+        return "Credentials Invalid !!";
+    }
 }

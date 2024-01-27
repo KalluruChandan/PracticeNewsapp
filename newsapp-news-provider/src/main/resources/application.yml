@@ -4,7 +4,3 @@ spring:
     name: NEWSAPP-NEWS-PROVIDER
   config:
     import: configserver:http://localhost:8888
-
-logging:
-  level:
-    web: DEBUG

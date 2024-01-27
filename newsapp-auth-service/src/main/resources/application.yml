@@ -5,3 +5,6 @@ spring:
   config:
     import: configserver:http://localhost:8888
 
+logging:
+  level:
+    com.newsapp.auth: DEBUG
