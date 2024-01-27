@@ -1,14 +1,19 @@
 package com.newsapp.auth.controller;
 
-import com.newsapp.auth.model.User;
+
+import com.newsapp.auth.payload.request.AuthRequestDTO;
+import com.newsapp.auth.payload.response.JwtResponseDTO;
 import com.newsapp.auth.repository.AuthRepository;
+import com.newsapp.auth.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +29,11 @@ public class AuthController {
     @Autowired
     private AuthRepository authRepository;
 
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping(
             path = "${auth.endpoint.login}"
@@ -33,10 +42,14 @@ public class AuthController {
             summary = "Login here",
             description = "This endpoint will enable a registered user to login."
     )
-    public List<User> login(){
-        List<User> allUsers = authRepository.findAll();
-        log.info("----------"+passwordEncoder.matches("chan123",allUsers.get(0).getPassword()));
-        return allUsers;
+    public JwtResponseDTO AuthenticateAndGetToken(@RequestBody AuthRequestDTO authRequestDTO){
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequestDTO.getUsername(), authRequestDTO.getPassword()));
+        if(authentication.isAuthenticated()){
+            return JwtResponseDTO.builder()
+                        .accessToken(jwtUtil.GenerateToken(authRequestDTO.getUsername()))
+                    .build();
+        } else {
+            throw new UsernameNotFoundException("invalid user request..!!");
+        }
     }
-//    public void login(){}
 }
