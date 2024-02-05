@@ -1,14 +1,19 @@
 package com.newsapp.auth.controller;
 
+import com.newsapp.auth.custom.JwtAuthenticationResponse;
 import com.newsapp.auth.model.User;
 import com.newsapp.auth.repository.AuthRepository;
+import com.newsapp.auth.security.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +29,8 @@ public class AuthController {
     @Autowired
     private AuthRepository authRepository;
 
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @PostMapping(
             path = "${auth.endpoint.login}"
@@ -33,10 +39,8 @@ public class AuthController {
             summary = "Login here",
             description = "This endpoint will enable a registered user to login."
     )
-    public List<User> login(){
-        List<User> allUsers = authRepository.findAll();
-        log.info("----------"+passwordEncoder.matches("chan123",allUsers.get(0).getPassword()));
-        return allUsers;
+
+    public ResponseEntity<JwtAuthenticationResponse> login(@RequestBody User request) {
+        return ResponseEntity.ok(authenticationService.signin(request));
     }
-//    public void login(){}
 }
