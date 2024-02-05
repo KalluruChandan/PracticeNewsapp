@@ -5,6 +5,7 @@ spring:
   config:
     import: configserver:http://localhost:8888
 
-logging:
-  level:
-    web: DEBUG
+news-provider:
+  third-party-endpoint: https://news67.p.rapidapi.com/v2/topic-search?languages=en&search=
+  api-key: 15cf8c1829msh6512b6b75c04450p1a83b8jsn9a2c24e0cbc3
+  host: news67.p.rapidapi.com
