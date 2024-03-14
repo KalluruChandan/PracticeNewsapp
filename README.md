@@ -2,7 +2,7 @@
 
 ## Overview
 
-The News Aggregator App is a web application that allows users to read and save news articles from various sources. It leverages the News Catcher API for fetching the latest news articles. The application is built with a microservices architecture in the backend, a responsive Angular/React frontend, and utilizes various tools and technologies for seamless integration and deployment.
+The News Aggregator App is a web application that allows users to read and save news articles from various sources. It leverages the RapidAPI for fetching the latest news articles. The application is built with a microservices architecture in the backend, a responsive Angular/React frontend, and utilizes various tools and technologies for seamless integration and deployment.
 
 ## Table of Contents
 
